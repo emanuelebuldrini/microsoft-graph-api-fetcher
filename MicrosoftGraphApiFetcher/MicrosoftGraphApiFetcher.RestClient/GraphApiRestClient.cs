@@ -34,9 +34,9 @@ namespace MicrosoftGraphApiFetcher.RestClient
         }
 
         /// <summary>
-        /// Get the list of all groups from Microsoft Graph Api.
+        /// Get the list of all groups of the configured Azure tenant using <see cref="GraphServiceClient"/>.
         /// </summary>
-        /// <returns>The list containing all groups.</returns>
+        /// <returns>The list of all groups of the configured Azure tenant.</returns>
         /// <remarks>The method fetches automatically all available pages.</remarks>
         public async Task<List<Group>> GetGroupsAsync()
         {

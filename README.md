@@ -1,6 +1,6 @@
 # Microsoft Graph API Console App
 
-This console application fetches data from your Microsoft tenant using the Microsoft Graph API.
+This console application fetches data from your Azure tenant using the Microsoft Graph API.
 
 ## Setup
 
@@ -48,7 +48,7 @@ Once the setup is complete, you can run the console application. Use the followi
 ```bash
 dotnet run
 ```
-The application will provide you a list of available commands: Type the command and press enter to execute it. The app fetch data from your Azure tenant using the configured Microsoft Graph API credentials.
+The application will provide you a list of available commands: Type the command and press enter to execute it. The app fetches data from your Azure tenant using the configured Microsoft Graph API credentials.
 
 **Console App commands**
   ```bash
