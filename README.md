@@ -54,6 +54,12 @@ The application will provide you a list of available commands: Type the command 
   ```bash
    Download groups
   ```
-_Download groups_ fetches all groups from the configured Azure tenant and save each of them as a JSON file into the following location "/MSGraph/Groups/{group name}.json". The save location is relative to the app executable.
-The folder must be empty if already existing. You need write permission on that folder.
+_Download groups_ fetches all groups from the configured Azure tenant and save each of them as a JSON file into the following location "/MSGraph/Groups/{group name}.json".
+
+  ```bash
+   Download users
+  ```
+_Download users_ fetches all users from the configured Azure tenant and save each of them as a JSON file into the following location "/MSGraph/Users/{user name}.json". 
+
+For all _Download_ commands the save location is relative to the app executable. The folder must be empty if already existing and it is required the write permission.
 
