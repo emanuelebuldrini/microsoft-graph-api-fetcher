@@ -39,26 +39,45 @@ namespace MicrosoftGraphApiFetcher.RestClient
         /// <returns>The list of all groups of the configured Azure tenant.</returns>
         /// <remarks>The method fetches automatically all available pages.</remarks>
         public async Task<List<Group>> GetGroupsAsync()
+        => await GetDirectoryObjectsAsync(() => _graphClient.Groups.GetAsync(),
+            (GroupCollectionResponse? response) => response?.Value,
+            (string link) => _graphClient.Groups.WithUrl(link).GetAsync());
+
+        /// <summary>
+        /// Get the list of all users of the configured Azure tenant using <see cref="GraphServiceClient"/>.
+        /// </summary>
+        /// <returns>The list of all users of the configured Azure tenant.</returns>
+        /// <remarks>The method fetches automatically all available pages.</remarks>
+        public async Task<List<User>> GetUsersAsync()
+        => await GetDirectoryObjectsAsync(() => _graphClient.Users.GetAsync(),
+            (UserCollectionResponse? response) => response?.Value,
+            (string link) => _graphClient.Users.WithUrl(link).GetAsync());
+
+        private async Task<List<V>> GetDirectoryObjectsAsync<T, V>(Func<Task<T?>> getDirectoryObjectCollectionFromGraph,
+            Func<T?, List<V>?> getDirectoryObjectsValue, Func<string, Task<T?>> getDirectoryObjectsPageFromGraph)
+            where T : BaseCollectionPaginationCountResponse
+            where V : DirectoryObject
         {
-            List<Group> groups = [];
-            var graphGroups = await _graphClient.Groups.GetAsync();
-            if (graphGroups?.Value != null)
+            List<V> directoryObjects = [];
+            var directoryObjectCollection = await getDirectoryObjectCollectionFromGraph();
+            var directoryObjectsValue = getDirectoryObjectsValue(directoryObjectCollection);
+            if (directoryObjectsValue != null)
             {
-                groups.AddRange(graphGroups.Value);
+                directoryObjects.AddRange(directoryObjectsValue);
             }
 
-            // Handle pagination fetching all pages.
-            while (graphGroups?.OdataNextLink != null)
+            // Handle pagination fetching all available pages.
+            while (directoryObjectCollection?.OdataNextLink != null)
             {
-                if (graphGroups.Value != null)
+                directoryObjectCollection = await getDirectoryObjectsPageFromGraph(directoryObjectCollection.OdataNextLink);
+                directoryObjectsValue = getDirectoryObjectsValue(directoryObjectCollection);
+                if (directoryObjectsValue != null)
                 {
-                    groups.AddRange(graphGroups.Value);
+                    directoryObjects.AddRange(directoryObjectsValue);
                 }
-
-                graphGroups = await _graphClient.Groups.WithUrl(graphGroups.OdataNextLink).GetAsync();
             }
 
-            return groups;
+            return directoryObjects;
         }
 
         private static GraphServiceClient InitializeGraphClient(AzureAdConfig azureAdConfig)
