@@ -12,12 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Graph" Version="5.44.0" />
+    <PackageReference Include="Microsoft.Graph" Version="5.46.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.59.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MicrosoftGraphApiFetcher.Models\MicrosoftGraphApiFetcher.Models.csproj" />
   </ItemGroup>
 
 </Project>

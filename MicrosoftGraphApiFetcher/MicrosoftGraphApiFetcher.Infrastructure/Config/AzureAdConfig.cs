@@ -1,4 +1,4 @@
-﻿namespace MicrosoftGraphApiFetcher.Models
+﻿namespace MicrosoftGraphApiFetcher.Infrastructure.Config
 {
     /// <summary>
     /// The Azure AD configuration to access your tenant.

@@ -1,9 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using MicrosoftGraphApiFetcher.Models;
-using MicrosoftGraphApiFetcher.RestClient;
-using MicrosoftGraphApiFetcher.Store;
+using MicrosoftGraphApiFetcher.Core;
+using MicrosoftGraphApiFetcher.Core.Strategies;
+using MicrosoftGraphApiFetcher.Infrastructure;
 using System.Text.Json;
+using MicrosoftGraphApiFetcher.RestClient.DirectoryObjectStrategies;
+using MicrosoftGraphApiFetcher.Infrastructure.NameDirectoryObject;
+using MicrosoftGraphApiFetcher.Infrastructure.Config;
 
 // List of available commands
 List<string> availableCommands =
@@ -13,11 +17,20 @@ List<string> availableCommands =
     // Add more commands here as needed
 ];
 
-// By default the app writes beautified JSONs
-var jsonSerializerOptions = new JsonSerializerOptions() { WriteIndented = true };
-
 Console.WriteLine("Welcome to the Microsoft Graph API App!");
 
+// Get Azure configure to initialize the REST client.
+var azureAdConfig = GetAzureAdConfig();
+if (!ValidateAzureConfig(azureAdConfig))
+{
+    Console.WriteLine("Invalid Azure AD configuration: Make sure to provide all required properties in your app settings.");
+    return;
+}
+
+var graphClientInitializer = new GraphClientInitializer(azureAdConfig!);
+var graphClient = graphClientInitializer.GetInstance();
+
+// Commands menu loop
 while (true)
 {
     // Display available commands to the user
@@ -38,18 +51,12 @@ while (true)
         switch (userInput)
         {
             case "Download groups":
-                await ExecuteDownloadDirectoryObjects(
-                    (GraphApiRestClient graphApiRestClient) => graphApiRestClient.GetGroupsAsync(),
-                    (GraphApiStore graphApiStore, List<Group> directoryObjects) => graphApiStore.SaveGroupJsons(directoryObjects,
-                    serializationOptions: jsonSerializerOptions)
-                );
+                await ExecuteDownloadDirectoryObjects(graphClient, new FetchGroupStrategy(),
+                    new NameGroupStrategy(), containingFolder: "Groups");
                 break;
             case "Download users":
-                await ExecuteDownloadDirectoryObjects(
-                    (GraphApiRestClient graphApiRestClient) => graphApiRestClient.GetUsersAsync(),
-                    (GraphApiStore graphApiStore, List<User> directoryObjects) => graphApiStore.SaveUserJsons(directoryObjects,
-                    serializationOptions: jsonSerializerOptions)
-                );
+                await ExecuteDownloadDirectoryObjects(graphClient, new FetchUserStrategy(),
+                    new NameUserStrategy(), containingFolder: "Users");
                 break;
             // Add more cases for other commands here
             default:
@@ -63,23 +70,19 @@ while (true)
     }
 }
 
-static async Task ExecuteDownloadDirectoryObjects<T>(Func<GraphApiRestClient, Task<List<T>>> fetchDirectoryObjects, Func<GraphApiStore, List<T>, string?> storeDirectoryObjects)
-    where T : DirectoryObject
+static async Task ExecuteDownloadDirectoryObjects<T, V>(GraphServiceClient graphClient,
+    IFetchDirectoryObject<T, V> fetchStrategy,
+    INameDirectoryObject<V> nameStrategy, string containingFolder)
+    where T : BaseCollectionPaginationCountResponse
+    where V : DirectoryObject, new()
 {
     string directoryObjectName = typeof(T).Name;
-
     Console.WriteLine($"\nFetching {directoryObjectName}(s)...");
-    var azureAdConfig = GetAzureAdConfig();
-    if (!ValidateAzureConfig(azureAdConfig))
-    {
-        Console.WriteLine("Invalid Azure AD configuration: Make sure to provide all required properties in your app settings.");
-        return;
-    }
-    List<T> directoryObjects;
+    List<V> directoryObjects;
+    var fetcher = new DirectoryObjectFetcher<T, V>(graphClient);
     try
     {
-        GraphApiRestClient graphApiRestClient = new(azureAdConfig!);
-        directoryObjects = await fetchDirectoryObjects(graphApiRestClient);
+        directoryObjects = await fetcher.GetDirectoryObjectsAsync(fetchStrategy);
     }
     catch (Exception ex)
     {
@@ -87,18 +90,19 @@ static async Task ExecuteDownloadDirectoryObjects<T>(Func<GraphApiRestClient, Ta
         return;
     }
     Console.WriteLine($"{directoryObjects.Count} {directoryObjectName}(s) fetched.");
+
     Console.WriteLine($"\nSaving {directoryObjectName}(s)...");
-    GraphApiStore graphApiStore = new();
-    var saveLocation = storeDirectoryObjects(graphApiStore, directoryObjects);
-    if (graphApiStore.Exceptions.Count > 0)
+    var store = new DirectoryObjectStore<V>();
+    var saveLocation = store.SaveDirectoryObjectJson(directoryObjects, nameStrategy,
+        containingFolder, new JsonSerializerOptions() { WriteIndented = true }); // Write beautified JSONs.
+    if (store.Exceptions.Count > 0)
     {
-        var exceptionMessages = graphApiStore.Exceptions.Select(s => s.Message);
+        var exceptionMessages = store.Exceptions.Select(s => s.Message);
         Console.WriteLine($"Error(s) occurred while saving JSON files: {string.Join(Environment.NewLine, exceptionMessages)}");
     }
-
     if (saveLocation != null)
     {
-        Console.WriteLine($"JSON file for {graphApiStore.SavedCount} {directoryObjectName}(s) saved at location: \"{saveLocation}\".");
+        Console.WriteLine($"JSON file for {store.SavedCount} {directoryObjectName}(s) saved at location: \"{saveLocation}\".");
     }
 }
 

@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MicrosoftGraphApiFetcher.Models\MicrosoftGraphApiFetcher.Models.csproj" />
-    <ProjectReference Include="..\MicrosoftGraphApiFetcher.RestClient\MicrosoftGraphApiFetcher.RestClient.csproj" />
-    <ProjectReference Include="..\MicrosoftGraphApiFetcher.Store\MicrosoftGraphApiFetcher.Store.csproj" />
+    <ProjectReference Include="..\MicrosoftGraphApiFetcher.Infrastructure\MicrosoftGraphApiFetcher.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>    

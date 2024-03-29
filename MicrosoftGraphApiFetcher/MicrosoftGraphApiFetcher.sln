@@ -5,13 +5,11 @@ VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.App", "MicrosoftGraphApiFetcher.App\MicrosoftGraphApiFetcher.App.csproj", "{43716E55-CAE0-4049-980E-2331A2FD12D1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.Store", "MicrosoftGraphApiFetcher.Store\MicrosoftGraphApiFetcher.Store.csproj", "{6328F141-C734-46CE-91F5-6B94DF7B97F2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.Tests", "MicrosoftGraphApiFetcher.Tests\MicrosoftGraphApiFetcher.Tests.csproj", "{7CC4F155-0E15-44FD-8B08-EE2090BDA08E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.Models", "MicrosoftGraphApiFetcher.Models\MicrosoftGraphApiFetcher.Models.csproj", "{983D0AF6-BE12-4870-B9B3-DA547B2847E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.Infrastructure", "MicrosoftGraphApiFetcher.Infrastructure\MicrosoftGraphApiFetcher.Infrastructure.csproj", "{C0F78C84-3B1A-498A-9AF4-353431A12840}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.RestClient", "MicrosoftGraphApiFetcher.RestClient\MicrosoftGraphApiFetcher.RestClient.csproj", "{CE77E56D-0EA3-4D26-A63F-6544FB6EC568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphApiFetcher.Core", "MicrosoftGraphApiFetcher.Core\MicrosoftGraphApiFetcher.Core.csproj", "{2D820124-84D0-4E8A-984B-8913FA875167}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,22 +21,18 @@ Global
 		{43716E55-CAE0-4049-980E-2331A2FD12D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43716E55-CAE0-4049-980E-2331A2FD12D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43716E55-CAE0-4049-980E-2331A2FD12D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6328F141-C734-46CE-91F5-6B94DF7B97F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6328F141-C734-46CE-91F5-6B94DF7B97F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6328F141-C734-46CE-91F5-6B94DF7B97F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6328F141-C734-46CE-91F5-6B94DF7B97F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7CC4F155-0E15-44FD-8B08-EE2090BDA08E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7CC4F155-0E15-44FD-8B08-EE2090BDA08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CC4F155-0E15-44FD-8B08-EE2090BDA08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CC4F155-0E15-44FD-8B08-EE2090BDA08E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{983D0AF6-BE12-4870-B9B3-DA547B2847E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{983D0AF6-BE12-4870-B9B3-DA547B2847E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{983D0AF6-BE12-4870-B9B3-DA547B2847E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{983D0AF6-BE12-4870-B9B3-DA547B2847E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE77E56D-0EA3-4D26-A63F-6544FB6EC568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE77E56D-0EA3-4D26-A63F-6544FB6EC568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE77E56D-0EA3-4D26-A63F-6544FB6EC568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE77E56D-0EA3-4D26-A63F-6544FB6EC568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0F78C84-3B1A-498A-9AF4-353431A12840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F78C84-3B1A-498A-9AF4-353431A12840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0F78C84-3B1A-498A-9AF4-353431A12840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0F78C84-3B1A-498A-9AF4-353431A12840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D820124-84D0-4E8A-984B-8913FA875167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D820124-84D0-4E8A-984B-8913FA875167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D820124-84D0-4E8A-984B-8913FA875167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D820124-84D0-4E8A-984B-8913FA875167}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
