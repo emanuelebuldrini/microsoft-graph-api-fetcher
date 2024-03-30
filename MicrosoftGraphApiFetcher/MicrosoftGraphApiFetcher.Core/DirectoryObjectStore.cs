@@ -5,11 +5,16 @@ using System.Text.Json;
 namespace MicrosoftGraphApiFetcher.Core
 {
     /// <summary>
-    /// A store for Microsoft Graph API resources.
+    /// A store for Microsoft Graph <see cref="DirectoryObject"/> resources.
     /// </summary>
-    public class DirectoryObjectStore<T> : IDirectoryObjectStore<T>
+    /// <remarks> If no <see cref="baseDirectoryPath"></see> is provided, the default value is the current application path combined with "MSGraph".</remarks>
+    /// <param name="baseDirectoryPath">The base directory path to store resources</param>
+    public class DirectoryObjectStore<T>(string? baseDirectoryPath = null) : IDirectoryObjectStore<T>
         where T : DirectoryObject, new()
     {
+        private readonly string _baseDirectoryPath = string.IsNullOrWhiteSpace(baseDirectoryPath) ?
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MSGraph") : baseDirectoryPath;
+
         /// <summary>
         /// The count of the saved items on the last operation executed.
         /// </summary>
@@ -21,41 +26,22 @@ namespace MicrosoftGraphApiFetcher.Core
         /// <remarks> A new operation execution reset this list.</remarks>
         public List<Exception> Exceptions { get; private set; } = [];
 
-        private readonly string _baseDirectoryPath;
-
         /// <summary>
-        /// Construct an instance of <see cref="GraphApiStore"/>. 
+        /// Save the provided list of directory objects in distinct JSON files.
         /// </summary>
-        /// <remarks> If no <see cref="baseDirectoryPath"></see> is provided, the default value is the current application path combined with "MSGraph".</remarks>
-        /// <param name="baseDirectoryPath">The base directory path to store resources</param>
-        public DirectoryObjectStore(string? baseDirectoryPath = null)
-        {
-            if (string.IsNullOrWhiteSpace(baseDirectoryPath))
-            {
-                // Default to the assembly location of the app as base path
-                _baseDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MSGraph");
-            }
-            else
-            {
-                _baseDirectoryPath = baseDirectoryPath;
-            }
-        }
-
-
-        /// <summary>
-        /// Save the provided list of directory objects in JSON format.
-        /// </summary>
-        /// <remarks> The base destination folder is set on the constructor of this class. The Folder must be empty if already existing.
+        /// <remarks> The base destination folder is set on the constructor of this class. You can set the <paramref name="containingFolder"/>
+        /// to have a specific container for this directory object type. The Folder must be empty if already existing.
         /// The directory structure is created automatically if not existing. You need write permission on the specified folder.
-        /// If no serialization options are provided, the default <see cref="JsonSerializerOptions"></see> are used.
+        /// If no serialization options are provided, the default <see cref="JsonSerializerOptions"/> are used.
         /// An error on a group save does not abort the operation.
         /// Any exception raised in the process is collected in the <see cref="Exceptions"/> list.
         /// </remarks>
         /// <param name="directoryObjects">The list of directory objects to save.</param>
-        /// <param name="containingFolder">The containing folder for the JSON files. By default is "Groups". Pass null if you do not want a containing folder.</param>
+        /// <param name="nameObjectStrategy">A strategy to obtain the name of the specific <see cref="DirectoryObject"/>.</param>
+        /// <param name="containingFolder">The containing folder for the JSON files. Pass null if you do not want a containing folder.</param>
         /// <param name="serializationOptions">The JSON serialization preferences.</param>
         /// <returns>The save location for the JSON files or null if the operation was aborted before completion.</returns>
-        public string? SaveDirectoryObjectJson(List<T> directoryObjects, INameDirectoryObject<T> strategy, string? containingFolder = null, JsonSerializerOptions? serializationOptions = null)
+        public string? SaveDirectoryObjectJson(List<T> directoryObjects, INameDirectoryObject<T> nameObjectStrategy, string? containingFolder = null, JsonSerializerOptions? serializationOptions = null)
         {
             SavedCount = 0;
             Exceptions = [];
@@ -86,7 +72,7 @@ namespace MicrosoftGraphApiFetcher.Core
             foreach (var directoryObject in directoryObjects)
             {
                 // First get the directory object name using the provided function
-                string? directoryObjectName = strategy.GetDirectoryObjectName(directoryObject);
+                string? directoryObjectName = nameObjectStrategy.GetDirectoryObjectName(directoryObject);
                 // Validate directory object: should have at least Display Name and ID.
                 if (string.IsNullOrWhiteSpace(directoryObjectName) || string.IsNullOrWhiteSpace(directoryObject?.Id))
                 {

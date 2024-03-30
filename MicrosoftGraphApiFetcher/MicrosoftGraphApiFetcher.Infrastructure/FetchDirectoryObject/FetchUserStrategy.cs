@@ -4,7 +4,10 @@ using MicrosoftGraphApiFetcher.Core.Strategies;
 
 namespace MicrosoftGraphApiFetcher.RestClient.DirectoryObjectStrategies
 {
-    public class FetchUserStrategy : IFetchDirectoryObject<UserCollectionResponse, User>
+    /// <summary>
+    /// A strategy to fetch a <see cref="User"/> using a given <see cref="GraphServiceClient"/>.
+    /// </summary>
+    public class FetchUserStrategy() : IFetchDirectoryObject<UserCollectionResponse, User>
     {
         public Task<UserCollectionResponse?> GetDirectoryObjectCollectionFromGraph(GraphServiceClient graphServiceClient)
             => graphServiceClient.Users.GetAsync();
